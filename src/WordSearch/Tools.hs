@@ -6,10 +6,12 @@ module WordSearch.Tools
 
 
 import Data.List (transpose, findIndex, isInfixOf, isPrefixOf, tails, nub)
+import Data.Map (Map, insert, empty)
 import Data.Maybe (fromJust)
 import Data.Generics.Aliases (orElse)
 
 type Letter = (Char, Int, Int)
+type GridMap = Map (Int, Int) Char
 
 findSublistIndex :: Eq a => [a] -> [a] -> Maybe Int
 findSublistIndex xss xs = findIndex (isPrefixOf xss) $ tails xs
@@ -36,3 +38,36 @@ parsePuzzle p = (parseLetters $ lines p, parseWords $ lines p)
           parseLine chars y = mapIndex (\[c] x -> (c, x, y)) $ words chars
           parseLetters = mapIndex parseLine . dup (take . subtract 2 . length)
           parseWords = words . last
+
+
+parsePuzzle' :: String -> (GridMap, [String])
+parsePuzzle' p = (grid, wordList)
+    where linesP = lines p
+          grid = parseGrid gridStrings 0 empty
+          gridStrings = take (length linesP - 2) linesP
+          wordList = words . last $ linesP
+
+
+parseGrid :: [String] -> Int -> GridMap -> GridMap
+parseGrid [] _ grid = grid
+parseGrid (x:xs) row grid = parseGrid xs (row + 1) (parseRow x row 0 grid)
+
+
+parseRow :: String -> Int -> Int -> GridMap -> GridMap
+parseRow [] _ _ grid = grid
+parseRow (x:xs) row col grid = parseRow xs row (col + 1) (insert (row, col) x grid)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
