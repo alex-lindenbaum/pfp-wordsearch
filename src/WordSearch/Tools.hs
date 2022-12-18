@@ -1,10 +1,10 @@
 module WordSearch.Tools
-    (
-        parsePuzzle'
-    ,   findWord
-    ,   GridMap
-    ,   Coord
-    ) where
+  (
+    parsePuzzle'
+  , findWord
+  , GridMap
+  , Coord
+  ) where
 
 
 import Data.List (transpose, findIndex, isInfixOf, isPrefixOf, tails, nub)

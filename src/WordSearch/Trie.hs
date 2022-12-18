@@ -3,12 +3,12 @@ Implements a Trie; credit: http://mchaver.com/posts/2018-12-27-tries-in-haskell.
 -}
 
 module WordSearch.Trie
-    (
-        mkTrie
-    ,   Trie
-    ,   getTrie
-    ,   empty
-    ) where
+  (
+    mkTrie
+  , Trie
+  , getTrie
+  , empty
+  ) where
 
 
 import qualified Data.Map.Lazy as Map

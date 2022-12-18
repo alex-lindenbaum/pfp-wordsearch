@@ -21,5 +21,4 @@ dfs p trie index@(row, col) visited word =
               newWord       = word++[c]
               child         = fromMaybe empty (Data.Map.lookup c children)
               trav ind      = dfs p child ind (index:visited) newWord
-              recurse       = trav (row, col-1) ++ trav (row, col+1)
-                              ++ trav (row-1, col) ++ trav (row+1, col)
+              recurse       = trav (row, col-1) ++ trav (row, col+1) ++ trav (row-1, col) ++ trav (row+1, col)
