@@ -18,7 +18,8 @@ main = do
     puzzle <- readFile filename
     let (p, w) = parsePuzzle' puzzle
         trie = mkTrie w
-        words = Map.foldrWithKey (\index val wordList -> dfs index trie val ++ wordList) [] p
+        output = Map.foldrWithKey (\index _ wordList -> dfs p trie index [] "" ++ wordList) [] p
+    mapM_ putStrLn output
     -- foldl (\pos word -> dfs word p ++ pos) [] w
     --     positions = nub $ foldl (\pos word -> findWord word p ++ pos) [] w
     -- mapM_ (\ row -> do
@@ -29,5 +30,5 @@ main = do
     --                ) row
     --          putStrLn ""
     --       ) p
-    print (Map.lookup (1, 2) p)
+    -- print (Map.lookup (1, 2) p)
 

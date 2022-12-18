@@ -6,6 +6,8 @@ module WordSearch.Trie
     (
         mkTrie
     ,   Trie
+    ,   getTrie
+    ,   empty
     ) where
 
 
@@ -16,6 +18,9 @@ data Trie a = Trie Bool (Map.Map a (Trie a)) deriving (Eq, Read, Show)
 
 empty :: Trie a
 empty = Trie False Map.empty
+
+getTrie :: Trie a -> (Bool, Map.Map a (Trie a))
+getTrie (Trie end nodes) = (end, nodes)
 
 insert :: Ord a => [a] -> Trie a -> Trie a
 insert []     (Trie _ nodes)     = Trie True nodes
@@ -31,7 +36,7 @@ mkTrie as = mkTrie' as empty
 
 member :: Ord a => [a] -> Trie a -> Bool
 member []     (Trie end _) = end
-member (x:xs) (Trie _ nodes) = fromMaybe False (member xs <$> Map.lookup x nodes)
+member (x:xs) (Trie _ nodes) = maybe False (member xs) (Map.lookup x nodes)
 
 
 lengthOfChildNodes :: Trie a -> Int
@@ -40,8 +45,8 @@ lengthOfChildNodes (Trie _ nodes) = Map.size nodes
 deletable :: Ord a => [a] -> Trie a -> Bool
 deletable []       (Trie _ nodes) = Map.null nodes
 deletable (x : xs) (Trie end nodes) =
-  (length xs == 0 || not end) &&
-  maybe False (\t -> deletable xs t && (length xs == 0 || (lengthOfChildNodes t) < 1)) (Map.lookup x nodes)
+  (null xs || not end) &&
+  maybe False (\t -> deletable xs t && (null xs || lengthOfChildNodes t < 1)) (Map.lookup x nodes)
 
 delete :: Ord a => [a] -> Trie a -> Trie a
 delete as t = if member as t then delete' as t else t

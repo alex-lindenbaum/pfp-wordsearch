@@ -2,6 +2,8 @@ module WordSearch.Tools
     (
         parsePuzzle'
     ,   findWord
+    ,   GridMap
+    ,   Coord
     ) where
 
 
@@ -11,7 +13,8 @@ import Data.Maybe (fromJust)
 import Data.Generics.Aliases (orElse)
 
 type Letter = (Char, Int, Int)
-type GridMap = Map (Int, Int) Char
+type Coord = (Int, Int)
+type GridMap = Map Coord Char
 
 findSublistIndex :: Eq a => [a] -> [a] -> Maybe Int
 findSublistIndex xss xs = findIndex (isPrefixOf xss) $ tails xs
@@ -50,12 +53,12 @@ parsePuzzle' p = (grid, wordList)
 
 parseGrid :: [String] -> Int -> GridMap -> GridMap
 parseGrid [] _ grid = grid
-parseGrid (x:xs) row grid = parseGrid xs (row + 1) (parseRow x row 0 grid)
+parseGrid (x:xs) row grid = parseGrid xs (row + 1) (parseRow x (row, 0) grid)
 
 
-parseRow :: String -> Int -> Int -> GridMap -> GridMap
-parseRow [] _ _ grid = grid
-parseRow (x:xs) row col grid = parseRow xs row (col + 1) (insert (row, col) x grid)
+parseRow :: String -> Coord -> GridMap -> GridMap
+parseRow [] _ grid = grid
+parseRow (x:xs) (row, col) grid = parseRow xs (row, col + 1) (insert (row, col) x grid)
 
 
 
