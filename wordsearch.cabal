@@ -26,6 +26,7 @@ source-repository head
 library
   exposed-modules:
       Lib
+      WordSearch.DFS
       WordSearch.Tools
       WordSearch.Trie
   other-modules:

@@ -1,6 +1,6 @@
 module WordSearch.Tools
     (
-        parsePuzzle
+        parsePuzzle'
     ,   findWord
     ) where
 
