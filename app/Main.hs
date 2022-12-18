@@ -4,7 +4,6 @@ module Main (main) where
 import Lib (parsePuzzle', mkTrie, dfs)
 import System.Environment(getArgs, getProgName)
 import System.Exit(die);
-import Data.List(nub)
 import qualified Data.Map as Map
 
 main :: IO()
@@ -18,7 +17,8 @@ main = do
     puzzle <- readFile filename
     let (p, w) = parsePuzzle' puzzle
         trie = mkTrie w
-        output = Map.foldrWithKey (\index _ wordList -> dfs p trie index [] "" ++ wordList) [] p
+        f index _ wordList = wordList ++ dfs p trie index [] ""
+        output = Map.foldrWithKey f [] p
     mapM_ putStrLn output
     -- foldl (\pos word -> dfs word p ++ pos) [] w
     --     positions = nub $ foldl (\pos word -> findWord word p ++ pos) [] w
