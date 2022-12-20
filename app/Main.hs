@@ -2,9 +2,11 @@
 module Main (main) where
 
 import Lib (parsePuzzle', mkTrie, dfs)
+import Control.Parallel.Strategies(rpar, rseq, runEval, parMap)
 import System.Environment(getArgs, getProgName)
 import System.Exit(die);
 import qualified Data.Map as Map
+import Data.List(union, foldl')
 
 main :: IO()
 main = do
@@ -17,18 +19,10 @@ main = do
   puzzle <- readFile filename
   let (p, w) = parsePuzzle' puzzle
       trie = mkTrie w
-      f index _ wordList = wordList ++ dfs p trie index [] ""
-      output = Map.foldrWithKey f [] p
-  mapM_ putStrLn output
-  -- foldl (\pos word -> dfs word p ++ pos) [] w
-  --     positions = nub $ foldl (\pos word -> findWord word p ++ pos) [] w
-  -- mapM_ (\ row -> do
-  --          mapM_ (\ l@(c, _, _) ->
-  --                   if l `notElem` positions
-  --                   then putChar c
-  --                   else putStr ("\x1b[32m" ++ [c] ++ "\x1b[0m")
-  --                ) row
-  --          putStrLn ""
-  --       ) p
-  -- print (Map.lookup (1, 2) p)
-
+      output = map (\(index, _) -> dfs p trie index [] "") (Map.toList p)
+      result = foldl' union [] output
+      -- output = runEval $ do
+      --   let result = parMap rpar (\(index, _) -> dfs p trie index [] "") (Map.toList p)
+      --   _ <- rseq result
+      --   return result
+  print result
