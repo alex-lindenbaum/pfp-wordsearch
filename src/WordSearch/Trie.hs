@@ -32,27 +32,3 @@ mkTrie as = mkTrie' as empty
   where
     mkTrie' []     trie = trie
     mkTrie' (x:xs) trie = mkTrie' xs $ insert x trie
-
-
-member :: Ord a => [a] -> Trie a -> Bool
-member []     (Trie end _) = end
-member (x:xs) (Trie _ nodes) = maybe False (member xs) (Map.lookup x nodes)
-
-
-lengthOfChildNodes :: Trie a -> Int
-lengthOfChildNodes (Trie _ nodes) = Map.size nodes
-
-deletable :: Ord a => [a] -> Trie a -> Bool
-deletable []       (Trie _ nodes) = Map.null nodes
-deletable (x : xs) (Trie end nodes) =
-  (null xs || not end) &&
-  maybe False (\t -> deletable xs t && (null xs || lengthOfChildNodes t < 1)) (Map.lookup x nodes)
-
-delete :: Ord a => [a] -> Trie a -> Trie a
-delete as t = if member as t then delete' as t else t
-  where
-    delete' as@(x : xs) t@(Trie end nodes) =
-      if deletable as t
-        then Trie end (Map.delete x nodes)
-        else Trie end (Map.alter (Just . delete' xs . fromMaybe empty) x nodes)
-    delete' [] t@(Trie end nodes) = if Map.size nodes > 0 then Trie False nodes else t

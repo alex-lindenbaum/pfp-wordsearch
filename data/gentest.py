@@ -16,3 +16,10 @@ def insert_newlines(s, every):
 output = insert_newlines(nonewlines, n)
 print(output)
 print('\nTHIS IS A RANDOM TEST NO WORRIES HERE', end='')
+# f = open('/home/helen/Desktop/pfp-wordsearch/data/dictionary.txt', 'r')
+# print(f.read())
+
+
+with open('/home/helen/Desktop/pfp-wordsearch/data/dictionary.txt') as f:
+    for line in f:
+        print(line.strip().upper(), end=' ')
