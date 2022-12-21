@@ -5,6 +5,7 @@ import Lib (parsePuzzle, splitInQuarter, mkTrie, dfs)
 import Data.List(nub)
 import System.Environment(getArgs, getProgName)
 import System.Exit(die);
+import Data.List(union)
 import Control.Parallel.Strategies
 import qualified Data.Map as Map
 
@@ -24,26 +25,23 @@ main = do
       output = runEval $ do
         let result = parMap rpar (\(index, _) -> dfs p trie index [] "") (Map.toList p)
         -- let result = (withStrategy (parBuffer 100 r) . map (\(index, _) -> dfs p trie index [] "")) (Map.toList p)
-
         -- parMap strat f = withStrategy (parList strat) . map f
         _ <- rseq result
         return result
 
-
-
   let (p, w) = parsePuzzle puzzle
       trie = mkTrie w
       dfsWrapper (index, _) = dfs p trie index [] ""
-      (q1,q2,q3,q4) = splitInQuarter . Map.toList p
-      output = runEval $ do
-        q1Result <- rpar (dfsWrapper q1)
-        q2Result <- rpar (dfsWrapper q2)
-        q3Result <- rpar (dfsWrapper q3)
-        q4Result <- rpar (dfsWrapper q4)
+      (q1,q2,q3,q4) = splitInQuarter (Map.toList p)
+      (p1, p2, p3, p4) = runEval $ do
+        q1Result <- rpar (map dfsWrapper q1)
+        q2Result <- rpar (map dfsWrapper q2)
+        q3Result <- rpar (map dfsWrapper q3)
+        q4Result <- rpar (map dfsWrapper q4)
         _ <- rseq q1Result
         _ <- rseq q2Result
         _ <- rseq q3Result
         _ <- rseq q4Result
-        return nub $ q1Result ++ q2Result ++ q3Result ++ q4Result
+        return (q1Result, q2Result, q3Result, q4Result)
 
-  print output
+  print $ nub $ foldl (++) [] (p1 ++ p2 ++ p3 ++ p4)
