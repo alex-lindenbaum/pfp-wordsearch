@@ -49,6 +49,7 @@ executables:
     - -rtsopts
     - -with-rtsopts=-N
     - -eventlog
+    - -O2
     dependencies:
     - wordsearch
 

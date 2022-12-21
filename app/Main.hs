@@ -23,24 +23,18 @@ main = do
       trie = mkTrie w
       output = runEval $ do
         let result = parMap rdeepseq (\(index, _) -> dfs p trie index [] "") (Map.toList p)
-        -- let result = (withStrategy (parBuffer 100 rpar) . map (\(index, _) -> dfs p trie index [] "")) (Map.toList p)
-        -- parMap strat f = withStrategy (parList strat) . map f
+        -- Alternative attempt using parBuffer:
+        -- let result = (withStrategy (parBuffer 16 rpar) . map (\(index, _) -> dfs p trie index [] "")) (Map.toList p)
         _ <- rseq result
         return result
   print $ last output
-  -- putStrLn " "
-  -- print $ foldl' union [] output
+  print $ foldl' union [] output
 
+  -- Alternative attempt using static partitioning into 4 segments:
   -- let (p, w) = parsePuzzle puzzle
   --     trie = mkTrie w
   --     dfsWrapper (index, _) = dfs p trie index [] ""
-  --     -- solutions = parMap rseq dfsWrapper (Map.toList p)
-
-  --     (q1,q2,q3,q4) = splitInQuarter (Map.toList p)
-  --     -- pList = Map.toList p
-  --     -- (t1, t2) = splitAt (length pList `div` 2) pList
-  --     -- (q1, q2) = splitAt (length t1 `div` 2) t1
-  --     -- (q3, q4) = splitAt (length t1 `div` 2) t2
+  --     (q1, q2, q3, q4) = splitInQuarter (Map.toList p)
   --     (p1, p2, p3, p4) = runEval $ do
   --       q1Result <- rpar (force (map dfsWrapper q1))
   --       q2Result <- rpar (force (map dfsWrapper q2))
@@ -51,5 +45,4 @@ main = do
   --       _ <- rseq q3Result
   --       _ <- rseq q4Result
   --       return (q1Result, q2Result, q3Result, q4Result)
-
-  -- print $ nub $ foldl' (++) [] (p1 ++ p2 ++ p3 ++ p4)
+  -- -- print $ nub $ concat (p1 ++ p2 ++ p3 ++ p4)
